@@ -188,7 +188,7 @@ class AuthController extends Controller
                 ->setBody('<h1>Hi, follow this link for registration!</h1>
               <a href="http://localhost:2000/api/signup/' . $refCode . '">Register</a>', 'text/html');
         });
-        return 'Email sent Successfully';
+        return 'Email sent Successfully, check the log for dev phase';
     }
     public function confirmPin(Request $request, $pin)
     {
