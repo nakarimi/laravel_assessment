@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
@@ -179,7 +180,15 @@ class AuthController extends Controller
     {
         $user = Auth::user();
         $refCode = Invite::invite($request->email, $user->id);
-        return 'http://localhost:2000/api/signup/' . $refCode;
+        $email = 'nasseralikarimi@gmail.com';
+        $subject = "Invitation Email";
+        Mail::send([], [], function ($message) use ($email, $subject, $refCode) {
+            $message->to($email)
+                ->subject($subject)
+                ->setBody('<h1>Hi, follow this link for registration!</h1>
+              <a href="http://localhost:2000/api/signup/' . $refCode . '">Register</a>', 'text/html');
+        });
+        return 'Email sent Successfully';
     }
     public function confirmPin(Request $request, $pin)
     {
