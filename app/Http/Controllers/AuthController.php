@@ -180,7 +180,7 @@ class AuthController extends Controller
     {
         $user = Auth::user();
         $refCode = Invite::invite($request->email, $user->id);
-        $email = 'nasseralikarimi@gmail.com';
+        $email = $request->email;
         $subject = "Invitation Email";
         Mail::send([], [], function ($message) use ($email, $subject, $refCode) {
             $message->to($email)
@@ -188,7 +188,7 @@ class AuthController extends Controller
                 ->setBody('<h1>Hi, follow this link for registration!</h1>
               <a href="http://localhost:2000/api/signup/' . $refCode . '">Register</a>', 'text/html');
         });
-        return 'Email sent Successfully, check the log for dev phase';
+        return 'Email sent Successfully, (Check Laravel Log for dev)';
     }
     public function confirmPin(Request $request, $pin)
     {
@@ -233,9 +233,18 @@ class AuthController extends Controller
                         'pin' => mt_rand(100000, 999999),
                     ]
                 ));
+                $email = $request->email;
+                $subject = "Registration Confirmaiton";
+                $pin = $user->pin;
+                Mail::send([], [], function ($message) use ($email, $subject, $pin) {
+                    $message->to($email)
+                        ->subject($subject)
+                        ->setBody('<h1>Hi, follow this link to confirm your registration!</h1>
+                        <a href="http://localhost:2000/api/confirm-pin/' . $pin . '">' . $pin . '</a>', 'text/html');
+                });
                 Invite::consume($code);
                 DB::commit();
-                return 'http://localhost:2000/api/confirm-pin/' . $user->pin;
+                return 'Check your mailbox for confirmaion, (Laravel Log for dev)';
             } else {
                 return 'invalid or expired email';
             }
